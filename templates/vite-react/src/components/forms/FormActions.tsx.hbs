@@ -1,0 +1,60 @@
+import { useNavigate } from 'react-router-dom';
+import { Button } from './Button';
+import { cn } from '@/utils/cn';
+
+export interface FormActionsProps {
+  submitLabel?: string;
+  cancelLabel?: string;
+  cancelHref?: string;
+  isLoading?: boolean;
+  isDisabled?: boolean;
+  onCancel?: () => void;
+  className?: string;
+  align?: 'left' | 'right' | 'between';
+}
+
+export function FormActions({
+  submitLabel = 'Save',
+  cancelLabel = 'Cancel',
+  cancelHref,
+  isLoading = false,
+  isDisabled = false,
+  onCancel,
+  className,
+  align = 'right',
+}: FormActionsProps) {
+  const navigate = useNavigate();
+
+  const handleCancel = () => {
+    if (onCancel) {
+      onCancel();
+    } else if (cancelHref) {
+      navigate(cancelHref);
+    } else {
+      navigate(-1);
+    }
+  };
+
+  const alignmentClasses = {
+    left: 'justify-start',
+    right: 'justify-end',
+    between: 'justify-between',
+  };
+
+  return (
+    <div
+      className={cn(
+        'flex items-center gap-3 pt-6 mt-6 border-t border-gray-200',
+        alignmentClasses[align],
+        className
+      )}
+    >
+      <Button type="button" variant="secondary" onClick={handleCancel} disabled={isLoading}>
+        {cancelLabel}
+      </Button>
+      <Button type="submit" isLoading={isLoading} disabled={isDisabled || isLoading}>
+        {submitLabel}
+      </Button>
+    </div>
+  );
+}

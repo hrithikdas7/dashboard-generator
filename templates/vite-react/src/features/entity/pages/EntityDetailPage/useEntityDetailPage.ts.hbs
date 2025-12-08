@@ -1,0 +1,38 @@
+import { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { use{{entity.name}}, use{{entity.name}}Mutations } from '../../hooks';
+
+export function use{{entity.name}}DetailPage() {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+
+  const { {{camelCase entity.name}}, isLoading, isError, error } = use{{entity.name}}(id);
+  const { delete{{entity.name}} } = use{{entity.name}}Mutations();
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDelete = async () => {
+    if (!id) return;
+
+    setIsDeleting(true);
+    const success = await delete{{entity.name}}(id);
+    setIsDeleting(false);
+
+    if (success) {
+      navigate('/{{entity.slug}}');
+    }
+  };
+
+  return {
+    id,
+    {{camelCase entity.name}},
+    isLoading,
+    isError,
+    error,
+    showDeleteModal,
+    setShowDeleteModal,
+    isDeleting,
+    handleDelete,
+  };
+}

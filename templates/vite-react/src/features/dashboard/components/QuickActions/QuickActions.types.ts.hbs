@@ -1,0 +1,13 @@
+export interface QuickAction {
+  id: string;
+  label: string;
+  href: string;
+  icon?: React.ReactNode;
+  description?: string;
+}
+
+export interface QuickActionsProps {
+  title?: string;
+  actions: QuickAction[];
+  className?: string;
+}

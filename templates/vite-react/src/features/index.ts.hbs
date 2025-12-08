@@ -1,0 +1,10 @@
+// Feature modules
+{{#if hasAuth}}
+export * from './auth';
+{{/if}}
+{{#if hasDashboard}}
+export * from './dashboard';
+{{/if}}
+{{#each entities}}
+export * from './{{slug}}';
+{{/each}}

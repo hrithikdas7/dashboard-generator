@@ -1,0 +1,50 @@
+/**
+ * Generic API response wrapper
+ */
+export interface ApiResponse<T> {
+  data: T;
+  message?: string;
+  success: boolean;
+}
+
+/**
+ * Paginated list response
+ */
+export interface PaginatedResponse<T> {
+  data: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+/**
+ * List query parameters
+ */
+export interface ListParams {
+  page?: number;
+  pageSize?: number;
+  search?: string;
+  sort?: string;
+  sortDirection?: 'asc' | 'desc';
+  filters?: Record<string, string | number | boolean>;
+}
+
+/**
+ * API error response
+ */
+export interface ApiError {
+  message: string;
+  code?: string;
+  errors?: Record<string, string[]>;
+  status?: number;
+}
+
+/**
+ * Mutation result
+ */
+export interface MutationResult<T> {
+  data?: T;
+  error?: ApiError;
+  isLoading: boolean;
+}

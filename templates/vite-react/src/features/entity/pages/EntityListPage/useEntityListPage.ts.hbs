@@ -1,0 +1,74 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { use{{entity.pluralName}}, use{{entity.name}}Mutations } from '../../hooks';
+
+export function use{{entity.name}}ListPage() {
+  const navigate = useNavigate();
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState('');
+  const [sortField, setSortField] = useState('{{entity.listConfig.defaultSort.field}}');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('{{entity.listConfig.defaultSort.direction}}');
+
+  // Delete confirmation
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const { {{camelCase entity.pluralName}}, total, isLoading } = use{{entity.pluralName}}({
+    page,
+    search,
+    sort: sortField,
+    sortDirection,
+  });
+
+  const { delete{{entity.name}} } = use{{entity.name}}Mutations();
+
+  const handleSort = (field: string) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!deleteId) return;
+
+    setIsDeleting(true);
+    const success = await delete{{entity.name}}(deleteId);
+    setIsDeleting(false);
+
+    if (success) {
+      setDeleteId(null);
+    }
+  };
+
+  const handleRowClick = (id: string) => {
+    navigate(`/{{entity.slug}}/${id}`);
+  };
+
+  return {
+    // Data
+    {{camelCase entity.pluralName}},
+    total,
+    isLoading,
+    // Pagination
+    page,
+    setPage,
+    pageSize: {{entity.listConfig.pageSize}},
+    // Search
+    search,
+    setSearch,
+    // Sorting
+    sortField,
+    sortDirection,
+    handleSort,
+    // Delete
+    deleteId,
+    setDeleteId,
+    isDeleting,
+    handleDelete,
+    // Navigation
+    handleRowClick,
+  };
+}

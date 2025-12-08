@@ -1,0 +1,30 @@
+// Common reusable UI components
+export { Button } from './Button';
+export { Input } from './Input';
+export { Select } from './Select';
+export { Checkbox } from './Checkbox';
+export { Badge } from './Badge';
+export { Card, CardHeader, CardTitle, CardContent, CardFooter } from './Card';
+export { Modal, ConfirmModal } from './Modal';
+export { Spinner } from './Spinner';
+export { LoadingState } from './LoadingState';
+export { DataTable } from './DataTable';
+export type { Column } from './DataTable';
+export { TablePagination } from './TablePagination';
+export { TableSearch } from './TableSearch';
+export { FormField } from './FormField';
+export { FormSection } from './FormSection';
+export { FormActions } from './FormActions';
+
+// Helper to get badge variant based on status
+export function getStatusVariant(status: string): 'default' | 'success' | 'warning' | 'danger' {
+  const variants: Record<string, 'default' | 'success' | 'warning' | 'danger'> = {
+    active: 'success',
+    inactive: 'default',
+    pending: 'warning',
+    discontinued: 'danger',
+    completed: 'success',
+    cancelled: 'danger',
+  };
+  return variants[status.toLowerCase()] || 'default';
+}

@@ -1,0 +1,55 @@
+import { PageHeader } from '@/components/layout';
+import { StatCard, StatIcons, RecentList, QuickActions, ActionIcons } from '../../components';
+import { useDashboardPage } from './useDashboardPage';
+
+export function DashboardPage() {
+  const { recentItems, isLoading, quickActions } = useDashboardPage();
+
+  const quickActionsWithIcons = quickActions.map((action) => ({
+    ...action,
+    icon: ActionIcons.Plus,
+  }));
+
+  return (
+    <div>
+      <PageHeader
+        title="{{dashboard.title}}"
+        description="Welcome to your dashboard"
+      />
+
+      {/* Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+{{#each dashboard.widgets}}
+{{#if (eq type "stat-card")}}
+        <StatCard
+          title="{{statConfig.label}}"
+          value="{{statConfig.mockValue}}"
+          icon={StatIcons.{{pascalCase statConfig.icon}} }
+          trend="{{statConfig.trend}}"
+          trendValue="+12%"
+        />
+{{/if}}
+{{/each}}
+      </div>
+
+      {/* Main content */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Recent list */}
+        <div className="lg:col-span-2">
+          <RecentList
+            title="Recent Items"
+            items={recentItems}
+            isLoading={isLoading}
+            viewAllHref="/{{#each entities}}{{#if @first}}{{slug}}{{/if}}{{/each}}"
+            emptyMessage="No items yet"
+          />
+        </div>
+
+        {/* Quick actions */}
+        <div>
+          <QuickActions actions={quickActionsWithIcons} />
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -1,0 +1,13 @@
+import type { {{entity.name}} } from '@/types';
+
+export interface {{entity.name}}DetailPageState {
+  showDeleteModal: boolean;
+  isDeleting: boolean;
+}
+
+export interface {{entity.name}}DetailPageData {
+  {{camelCase entity.name}}: {{entity.name}} | null;
+  isLoading: boolean;
+  isError: boolean;
+  error: string | null;
+}

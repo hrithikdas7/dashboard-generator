@@ -1,0 +1,151 @@
+import { Input } from './Input';
+import { Select } from './Select';
+import { Checkbox } from './Checkbox';
+
+interface Textarea extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+  className?: string;
+}
+
+function Textarea({ className, ...props }: Textarea) {
+  return (
+    <textarea
+      className={`block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm ${className || ''}`}
+      {...props}
+    />
+  );
+}
+
+export interface SelectOption {
+  value: string;
+  label: string;
+}
+
+export interface FormFieldProps {
+  name: string;
+  label: string;
+  type: 'string' | 'text' | 'number' | 'boolean' | 'date' | 'datetime' | 'email' | 'url' | 'enum' | 'relation';
+  value: unknown;
+  onChange: (name: string, value: unknown) => void;
+  error?: string;
+  required?: boolean;
+  disabled?: boolean;
+  placeholder?: string;
+  hint?: string;
+  options?: SelectOption[];
+  min?: number;
+  max?: number;
+  minLength?: number;
+  maxLength?: number;
+}
+
+export function FormField({
+  name,
+  label,
+  type,
+  value,
+  onChange,
+  error,
+  required,
+  disabled,
+  placeholder,
+  hint,
+  options = [],
+  min,
+  max,
+  minLength,
+  maxLength,
+}: FormFieldProps) {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    let newValue: unknown = e.target.value;
+
+    if (type === 'number') {
+      newValue = e.target.value === '' ? '' : Number(e.target.value);
+    } else if (type === 'boolean') {
+      newValue = (e.target as HTMLInputElement).checked;
+    }
+
+    onChange(name, newValue);
+  };
+
+  // Boolean field
+  if (type === 'boolean') {
+    return (
+      <Checkbox
+        name={name}
+        label={label}
+        checked={Boolean(value)}
+        onChange={handleChange}
+        error={error}
+        hint={hint}
+        disabled={disabled}
+        required={required}
+      />
+    );
+  }
+
+  // Textarea field
+  if (type === 'text') {
+    return (
+      <Textarea
+        name={name}
+        label={label}
+        value={String(value ?? '')}
+        onChange={handleChange}
+        error={error}
+        hint={hint}
+        placeholder={placeholder}
+        disabled={disabled}
+        required={required}
+        minLength={minLength}
+        maxLength={maxLength}
+      />
+    );
+  }
+
+  // Select field (enum or relation)
+  if (type === 'enum' || type === 'relation') {
+    return (
+      <Select
+        name={name}
+        label={label}
+        value={String(value ?? '')}
+        onChange={handleChange}
+        error={error}
+        hint={hint}
+        options={options}
+        placeholder={placeholder || `Select ${label.toLowerCase()}...`}
+        disabled={disabled}
+        required={required}
+      />
+    );
+  }
+
+  // Input field types
+  const inputType = {
+    string: 'text',
+    number: 'number',
+    date: 'date',
+    datetime: 'datetime-local',
+    email: 'email',
+    url: 'url',
+  }[type] || 'text';
+
+  return (
+    <Input
+      type={inputType}
+      name={name}
+      label={label}
+      value={value === null || value === undefined ? '' : String(value)}
+      onChange={handleChange}
+      error={error}
+      hint={hint}
+      placeholder={placeholder}
+      disabled={disabled}
+      required={required}
+      min={min}
+      max={max}
+      minLength={minLength}
+      maxLength={maxLength}
+    />
+  );
+}

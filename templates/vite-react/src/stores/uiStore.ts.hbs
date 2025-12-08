@@ -1,0 +1,84 @@
+import { create } from 'zustand';
+
+interface UIState {
+  // Sidebar
+  sidebarOpen: boolean;
+  sidebarCollapsed: boolean;
+
+  // Modal
+  activeModal: string | null;
+  modalData: unknown;
+
+  // Toast notifications
+  toasts: Toast[];
+
+  // Actions
+  toggleSidebar: () => void;
+  setSidebarOpen: (open: boolean) => void;
+  setSidebarCollapsed: (collapsed: boolean) => void;
+  openModal: (modalId: string, data?: unknown) => void;
+  closeModal: () => void;
+  addToast: (toast: Omit<Toast, 'id'>) => void;
+  removeToast: (id: string) => void;
+}
+
+export interface Toast {
+  id: string;
+  type: 'success' | 'error' | 'warning' | 'info';
+  title: string;
+  message?: string;
+  duration?: number;
+}
+
+export const useUIStore = create<UIState>((set) => ({
+  // Initial state
+  sidebarOpen: true,
+  sidebarCollapsed: false,
+  activeModal: null,
+  modalData: null,
+  toasts: [],
+
+  // Actions
+  toggleSidebar: () =>
+    set((state) => ({
+      sidebarOpen: !state.sidebarOpen,
+    })),
+
+  setSidebarOpen: (open) =>
+    set({
+      sidebarOpen: open,
+    }),
+
+  setSidebarCollapsed: (collapsed) =>
+    set({
+      sidebarCollapsed: collapsed,
+    }),
+
+  openModal: (modalId, data) =>
+    set({
+      activeModal: modalId,
+      modalData: data,
+    }),
+
+  closeModal: () =>
+    set({
+      activeModal: null,
+      modalData: null,
+    }),
+
+  addToast: (toast) =>
+    set((state) => ({
+      toasts: [
+        ...state.toasts,
+        {
+          ...toast,
+          id: Math.random().toString(36).substring(2, 9),
+        },
+      ],
+    })),
+
+  removeToast: (id) =>
+    set((state) => ({
+      toasts: state.toasts.filter((t) => t.id !== id),
+    })),
+}));

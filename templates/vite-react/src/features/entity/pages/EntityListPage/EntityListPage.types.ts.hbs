@@ -1,0 +1,16 @@
+import type { {{entity.name}} } from '@/types';
+
+export interface {{entity.name}}ListPageState {
+  page: number;
+  search: string;
+  sortField: string;
+  sortDirection: 'asc' | 'desc';
+  deleteId: string | null;
+  isDeleting: boolean;
+}
+
+export interface {{entity.name}}ListPageData {
+  {{camelCase entity.pluralName}}: {{entity.name}}[];
+  total: number;
+  isLoading: boolean;
+}

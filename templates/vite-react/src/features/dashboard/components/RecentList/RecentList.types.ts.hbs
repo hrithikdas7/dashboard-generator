@@ -1,0 +1,21 @@
+export interface RecentListItem {
+  id: string;
+  title: string;
+  subtitle?: string;
+  href: string;
+  badge?: {
+    text: string;
+    variant?: 'default' | 'success' | 'warning' | 'danger';
+  };
+  timestamp?: string;
+}
+
+export interface RecentListProps {
+  title: string;
+  items: RecentListItem[];
+  isLoading?: boolean;
+  emptyMessage?: string;
+  viewAllHref?: string;
+  viewAllLabel?: string;
+  className?: string;
+}

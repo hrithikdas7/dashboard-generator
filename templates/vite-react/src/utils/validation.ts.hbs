@@ -1,0 +1,133 @@
+/**
+ * Validation rules for form fields
+ */
+
+export interface ValidationRule {
+  required?: string;
+  minLength?: { value: number; message: string };
+  maxLength?: { value: number; message: string };
+  min?: { value: number; message: string };
+  max?: { value: number; message: string };
+  pattern?: { value: RegExp; message: string };
+  validate?: (value: unknown) => string | true;
+}
+
+/**
+ * Email validation pattern
+ */
+export const EMAIL_PATTERN = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+
+/**
+ * URL validation pattern
+ */
+export const URL_PATTERN = /^https?:\/\/.+/;
+
+/**
+ * Common validation rules
+ */
+export const validationRules = {
+  required: (fieldName: string): ValidationRule => ({
+    required: `${fieldName} is required`,
+  }),
+
+  email: (fieldName: string = 'Email'): ValidationRule => ({
+    required: `${fieldName} is required`,
+    pattern: {
+      value: EMAIL_PATTERN,
+      message: 'Please enter a valid email address',
+    },
+  }),
+
+  url: (fieldName: string = 'URL'): ValidationRule => ({
+    pattern: {
+      value: URL_PATTERN,
+      message: 'Please enter a valid URL (starting with http:// or https://)',
+    },
+  }),
+
+  minLength: (min: number, fieldName: string): ValidationRule => ({
+    minLength: {
+      value: min,
+      message: `${fieldName} must be at least ${min} characters`,
+    },
+  }),
+
+  maxLength: (max: number, fieldName: string): ValidationRule => ({
+    maxLength: {
+      value: max,
+      message: `${fieldName} must be no more than ${max} characters`,
+    },
+  }),
+
+  min: (min: number, fieldName: string): ValidationRule => ({
+    min: {
+      value: min,
+      message: `${fieldName} must be at least ${min}`,
+    },
+  }),
+
+  max: (max: number, fieldName: string): ValidationRule => ({
+    max: {
+      value: max,
+      message: `${fieldName} must be no more than ${max}`,
+    },
+  }),
+
+  password: (): ValidationRule => ({
+    required: 'Password is required',
+    minLength: {
+      value: 8,
+      message: 'Password must be at least 8 characters',
+    },
+    pattern: {
+      value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+      message: 'Password must contain at least one uppercase letter, one lowercase letter, and one number',
+    },
+  }),
+};
+
+/**
+ * Combine multiple validation rules
+ */
+export function combineRules(...rules: ValidationRule[]): ValidationRule {
+  return rules.reduce((acc, rule) => ({ ...acc, ...rule }), {});
+}
+
+/**
+ * Simple form validation helper
+ */
+export function validateField(value: unknown, rules: ValidationRule): string | null {
+  if (rules.required && !value) {
+    return rules.required;
+  }
+
+  if (typeof value === 'string') {
+    if (rules.minLength && value.length < rules.minLength.value) {
+      return rules.minLength.message;
+    }
+    if (rules.maxLength && value.length > rules.maxLength.value) {
+      return rules.maxLength.message;
+    }
+    if (rules.pattern && !rules.pattern.value.test(value)) {
+      return rules.pattern.message;
+    }
+  }
+
+  if (typeof value === 'number') {
+    if (rules.min && value < rules.min.value) {
+      return rules.min.message;
+    }
+    if (rules.max && value > rules.max.value) {
+      return rules.max.message;
+    }
+  }
+
+  if (rules.validate) {
+    const result = rules.validate(value);
+    if (typeof result === 'string') {
+      return result;
+    }
+  }
+
+  return null;
+}

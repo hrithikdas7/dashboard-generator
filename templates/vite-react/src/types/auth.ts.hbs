@@ -1,0 +1,38 @@
+/**
+ * User type
+ */
+export interface User {
+  id: string;
+  email: string;
+  name: string;
+  role?: string;
+  avatar?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+/**
+ * Login credentials
+ */
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}
+
+/**
+ * Login response
+ */
+export interface LoginResponse {
+  user: User;
+  token: string;
+  refreshToken?: string;
+  expiresIn?: number;
+}
+
+/**
+ * Auth error response
+ */
+export interface AuthError {
+  message: string;
+  code?: 'INVALID_CREDENTIALS' | 'ACCOUNT_LOCKED' | 'TOKEN_EXPIRED';
+}

@@ -1,0 +1,22 @@
+import type { Create{{entity.name}}Dto } from '@/types';
+
+export interface {{entity.name}}CreatePageState {
+  formData: Create{{entity.name}}Dto;
+  errors: Record<string, string>;
+}
+
+export const initial{{entity.name}}FormData: Create{{entity.name}}Dto = {
+{{#each entity.fields}}
+{{#if showInForm}}
+{{#if (eq type "boolean")}}
+  {{name}}: false,
+{{else if (eq type "number")}}
+  {{name}}: {{#if min}}{{min}}{{else}}0{{/if}},
+{{else if (eq type "enum")}}
+  {{name}}: '{{first enumValues}}',
+{{else}}
+  {{name}}: '',
+{{/if}}
+{{/if}}
+{{/each}}
+};

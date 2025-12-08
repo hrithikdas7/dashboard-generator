@@ -1,0 +1,7 @@
+import type { Update{{entity.name}}Dto } from '@/types';
+
+export interface {{entity.name}}EditPageState {
+  formData: Update{{entity.name}}Dto;
+  errors: Record<string, string>;
+  initialized: boolean;
+}

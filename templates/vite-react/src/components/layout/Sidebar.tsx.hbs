@@ -1,0 +1,90 @@
+import { NavLink } from 'react-router-dom';
+import { useUIStore } from '@/stores/uiStore';
+import { cn } from '@/utils/cn';
+
+interface NavItem {
+  label: string;
+  href: string;
+  icon: React.ReactNode;
+}
+
+const navigation: NavItem[] = [
+{{#if hasDashboard}}
+  {
+    label: 'Dashboard',
+    href: '/',
+    icon: (
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+      </svg>
+    ),
+  },
+{{/if}}
+{{#each entities}}
+  {
+    label: '{{pluralName}}',
+    href: '/{{slug}}',
+    icon: (
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+      </svg>
+    ),
+  },
+{{/each}}
+];
+
+export function Sidebar() {
+  const { sidebarCollapsed, setSidebarCollapsed } = useUIStore();
+
+  return (
+    <aside
+      className={cn(
+        'fixed left-0 top-0 z-40 h-screen bg-white border-r border-gray-200 transition-all duration-300',
+        sidebarCollapsed ? 'w-16' : 'w-64'
+      )}
+    >
+      {/* Logo */}
+      <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200">
+        {!sidebarCollapsed && (
+          <span className="text-lg font-semibold text-gray-900">{{displayName}}</span>
+        )}
+        <button
+          onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+          className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100"
+        >
+          <svg
+            className={cn('w-5 h-5 transition-transform', sidebarCollapsed && 'rotate-180')}
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+          </svg>
+        </button>
+      </div>
+
+      {/* Navigation */}
+      <nav className="p-2 space-y-1">
+        {navigation.map((item) => (
+          <NavLink
+            key={item.href}
+            to={item.href}
+            className={({ isActive }) =>
+              cn(
+                'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
+                isActive
+                  ? 'bg-primary-50 text-primary-700'
+                  : 'text-gray-700 hover:bg-gray-100',
+                sidebarCollapsed && 'justify-center'
+              )
+            }
+            title={sidebarCollapsed ? item.label : undefined}
+          >
+            {item.icon}
+            {!sidebarCollapsed && <span>{item.label}</span>}
+          </NavLink>
+        ))}
+      </nav>
+    </aside>
+  );
+}

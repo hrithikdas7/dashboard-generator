@@ -1,0 +1,62 @@
+import { Routes, Route, Navigate } from 'react-router-dom';
+{{#if hasAuth}}
+import { ProtectedRoute } from '@/components/layout/ProtectedRoute';
+import { LoginPage } from '@/features/auth/pages/LoginPage';
+{{/if}}
+{{#if hasDashboard}}
+import { DashboardPage } from '@/features/dashboard/pages/DashboardPage';
+{{/if}}
+{{#each entities}}
+import { {{name}}ListPage } from '@/features/{{slug}}/pages/{{name}}ListPage';
+import { {{name}}DetailPage } from '@/features/{{slug}}/pages/{{name}}DetailPage';
+import { {{name}}CreatePage } from '@/features/{{slug}}/pages/{{name}}CreatePage';
+import { {{name}}EditPage } from '@/features/{{slug}}/pages/{{name}}EditPage';
+{{/each}}
+import { NotFoundPage } from '@/pages/NotFoundPage';
+
+export function AppRouter() {
+  return (
+    <Routes>
+      {{#if hasAuth}}
+      {/* Public routes */}
+      <Route path="/login" element={<LoginPage />} />
+
+      {/* Protected routes */}
+      <Route element={<ProtectedRoute />}>
+        {{#if hasDashboard}}
+        <Route path="/" element={<DashboardPage />} />
+        <Route path="/dashboard" element={<Navigate to="/" replace />} />
+        {{else}}
+        <Route path="/" element={<Navigate to="/{{first entities.slug}}" replace />} />
+        {{/if}}
+
+        {{#each entities}}
+        {/* {{pluralName}} routes */}
+        <Route path="/{{slug}}" element={<{{name}}ListPage />} />
+        <Route path="/{{slug}}/new" element={<{{name}}CreatePage />} />
+        <Route path="/{{slug}}/:id" element={<{{name}}DetailPage />} />
+        <Route path="/{{slug}}/:id/edit" element={<{{name}}EditPage />} />
+        {{/each}}
+      </Route>
+      {{else}}
+      {{#if hasDashboard}}
+      <Route path="/" element={<DashboardPage />} />
+      <Route path="/dashboard" element={<Navigate to="/" replace />} />
+      {{else}}
+      <Route path="/" element={<Navigate to="/{{first entities.slug}}" replace />} />
+      {{/if}}
+
+      {{#each entities}}
+      {/* {{pluralName}} routes */}
+      <Route path="/{{slug}}" element={<{{name}}ListPage />} />
+      <Route path="/{{slug}}/new" element={<{{name}}CreatePage />} />
+      <Route path="/{{slug}}/:id" element={<{{name}}DetailPage />} />
+      <Route path="/{{slug}}/:id/edit" element={<{{name}}EditPage />} />
+      {{/each}}
+      {{/if}}
+
+      {/* 404 */}
+      <Route path="*" element={<NotFoundPage />} />
+    </Routes>
+  );
+}

@@ -1,0 +1,24 @@
+/**
+ * API endpoint constants
+ */
+
+export const API_ENDPOINTS = {
+  // Auth
+  AUTH: {
+    LOGIN: '/auth/login',
+    LOGOUT: '/auth/logout',
+    REFRESH: '/auth/refresh',
+    ME: '/auth/me',
+  },
+{{#each entities}}
+
+  // {{pluralName}}
+  {{constantCase pluralName}}: {
+    LIST: '/{{slug}}',
+    DETAIL: (id: string) => `/{{slug}}/${id}`,
+    CREATE: '/{{slug}}',
+    UPDATE: (id: string) => `/{{slug}}/${id}`,
+    DELETE: (id: string) => `/{{slug}}/${id}`,
+  },
+{{/each}}
+} as const;

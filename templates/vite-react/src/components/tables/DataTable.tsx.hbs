@@ -1,0 +1,212 @@
+import { useState } from 'react';
+import { cn } from '@/utils/cn';
+import { Spinner } from './Spinner';
+import { TablePagination } from './TablePagination';
+import { TableSearch } from './TableSearch';
+
+export interface Column<T> {
+  key: keyof T | string;
+  header: string;
+  sortable?: boolean;
+  width?: string;
+  render?: (value: unknown, row: T) => React.ReactNode;
+  className?: string;
+}
+
+export interface DataTableProps<T> {
+  data: T[];
+  columns: Column<T>[];
+  keyField?: keyof T;
+  isLoading?: boolean;
+  emptyMessage?: string;
+
+  // Search
+  searchable?: boolean;
+  searchValue?: string;
+  onSearchChange?: (value: string) => void;
+  searchPlaceholder?: string;
+
+  // Sorting
+  sortField?: string;
+  sortDirection?: 'asc' | 'desc';
+  onSort?: (field: string) => void;
+
+  // Pagination
+  pagination?: {
+    page: number;
+    pageSize: number;
+    total: number;
+    onPageChange: (page: number) => void;
+  };
+
+  // Row actions
+  actions?: (row: T) => React.ReactNode;
+  onRowClick?: (row: T) => void;
+
+  className?: string;
+}
+
+export function DataTable<T extends Record<string, unknown>>({
+  data,
+  columns,
+  keyField = 'id' as keyof T,
+  isLoading = false,
+  emptyMessage = 'No data found',
+  searchable = true,
+  searchValue = '',
+  onSearchChange,
+  searchPlaceholder = 'Search...',
+  sortField,
+  sortDirection,
+  onSort,
+  pagination,
+  actions,
+  onRowClick,
+  className,
+}: DataTableProps<T>) {
+  const [localSearch, setLocalSearch] = useState(searchValue);
+
+  const handleSearchChange = (value: string) => {
+    setLocalSearch(value);
+    onSearchChange?.(value);
+  };
+
+  const handleSort = (field: string) => {
+    if (onSort) {
+      onSort(field);
+    }
+  };
+
+  const getValue = (row: T, key: string): unknown => {
+    const keys = key.split('.');
+    let value: unknown = row;
+    for (const k of keys) {
+      if (value && typeof value === 'object') {
+        value = (value as Record<string, unknown>)[k];
+      } else {
+        return undefined;
+      }
+    }
+    return value;
+  };
+
+  return (
+    <div className={cn('bg-white rounded-lg border border-gray-200 shadow-sm', className)}>
+      {/* Search header */}
+      {searchable && onSearchChange && (
+        <div className="p-4 border-b border-gray-200">
+          <TableSearch
+            value={localSearch}
+            onChange={handleSearchChange}
+            placeholder={searchPlaceholder}
+          />
+        </div>
+      )}
+
+      {/* Table */}
+      <div className="overflow-x-auto">
+        <table className="w-full">
+          <thead>
+            <tr className="border-b border-gray-200 bg-gray-50">
+              {columns.map((column) => (
+                <th
+                  key={String(column.key)}
+                  className={cn(
+                    'px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider',
+                    column.sortable && 'cursor-pointer hover:bg-gray-100',
+                    column.className
+                  )}
+                  style=\{{ width: column.width }}
+                  onClick={() => column.sortable && handleSort(String(column.key))}
+                >
+                  <div className="flex items-center gap-1">
+                    {column.header}
+                    {column.sortable && sortField === column.key && (
+                      <svg
+                        className={cn(
+                          'w-4 h-4 transition-transform',
+                          sortDirection === 'desc' && 'rotate-180'
+                        )}
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 15l7-7 7 7"
+                        />
+                      </svg>
+                    )}
+                  </div>
+                </th>
+              ))}
+              {actions && (
+                <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-24">
+                  Actions
+                </th>
+              )}
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-200">
+            {isLoading ? (
+              <tr>
+                <td
+                  colSpan={columns.length + (actions ? 1 : 0)}
+                  className="px-4 py-12 text-center"
+                >
+                  <Spinner size="lg" className="mx-auto text-primary-600" />
+                </td>
+              </tr>
+            ) : data.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={columns.length + (actions ? 1 : 0)}
+                  className="px-4 py-12 text-center text-gray-500"
+                >
+                  {emptyMessage}
+                </td>
+              </tr>
+            ) : (
+              data.map((row, rowIndex) => (
+                <tr
+                  key={String(row[keyField]) || rowIndex}
+                  className={cn(
+                    'hover:bg-gray-50',
+                    onRowClick && 'cursor-pointer'
+                  )}
+                  onClick={() => onRowClick?.(row)}
+                >
+                  {columns.map((column) => {
+                    const value = getValue(row, String(column.key));
+                    return (
+                      <td
+                        key={String(column.key)}
+                        className={cn('px-4 py-3 text-sm text-gray-900', column.className)}
+                      >
+                        {column.render ? column.render(value, row) : String(value ?? '-')}
+                      </td>
+                    );
+                  })}
+                  {actions && (
+                    <td className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
+                      {actions(row)}
+                    </td>
+                  )}
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Pagination */}
+      {pagination && pagination.total > 0 && (
+        <div className="p-4 border-t border-gray-200">
+          <TablePagination {...pagination} />
+        </div>
+      )}
+    </div>
+  );
+}

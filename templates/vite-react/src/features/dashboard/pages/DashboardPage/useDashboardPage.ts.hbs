@@ -1,0 +1,46 @@
+{{#each entities}}
+{{#if @first}}
+import { use{{pluralName}} } from '@/features/{{slug}}/hooks';
+{{/if}}
+{{/each}}
+
+export function useDashboardPage() {
+{{#each entities}}
+{{#if @first}}
+  const { {{camelCase pluralName}}, isLoading } = use{{pluralName}}({ pageSize: 5 });
+
+  // Transform {{camelCase pluralName}} for recent list
+  const recentItems = {{camelCase pluralName}}.map((item) => ({
+    id: item.id,
+    title: item.name || `{{name}} $\{item.id}`,
+    subtitle: item.sku || undefined,
+    href: `/{{slug}}/$\{item.id}`,
+    badge: item.status ? {
+      text: item.status,
+      variant: item.status === 'active' ? 'success' as const : 'default' as const,
+    } : undefined,
+  }));
+{{/if}}
+{{/each}}
+
+  const quickActions = [
+{{#each entities}}
+    {
+      id: 'add-{{slug}}',
+      label: 'Add {{name}}',
+      href: '/{{slug}}/new',
+      description: 'Create a new {{lowerCase name}}',
+    },
+{{/each}}
+  ];
+
+  return {
+{{#each entities}}
+{{#if @first}}
+    recentItems,
+    isLoading,
+{{/if}}
+{{/each}}
+    quickActions,
+  };
+}

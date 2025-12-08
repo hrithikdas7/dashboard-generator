@@ -1,0 +1,77 @@
+import { useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { apiClient, getErrorMessage } from '@/api/client';
+import { API_ENDPOINTS } from '@/api/endpoints';
+import { useAuthStore } from '@/stores/authStore';
+import type { LoginCredentials, LoginResponse, User } from '@/types';
+
+export function useAuth() {
+  const navigate = useNavigate();
+  const { login: storeLogin, logout: storeLogout, user, isAuthenticated } = useAuthStore();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const login = useCallback(
+    async (credentials: LoginCredentials): Promise<boolean> => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const response = await apiClient.post<LoginResponse>(
+          API_ENDPOINTS.AUTH.LOGIN,
+          credentials
+        );
+
+        const { user, token } = response.data;
+        storeLogin(user, token);
+
+        return true;
+      } catch (err) {
+        const message = getErrorMessage(err);
+        setError(message);
+        return false;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [storeLogin]
+  );
+
+  const logout = useCallback(async () => {
+    setIsLoading(true);
+
+    try {
+      // Optionally call logout endpoint
+      await apiClient.post(API_ENDPOINTS.AUTH.LOGOUT).catch(() => {
+        // Ignore logout API errors
+      });
+    } finally {
+      storeLogout();
+      setIsLoading(false);
+      navigate('/login');
+    }
+  }, [storeLogout, navigate]);
+
+  const fetchCurrentUser = useCallback(async (): Promise<User | null> => {
+    setIsLoading(true);
+
+    try {
+      const response = await apiClient.get<User>(API_ENDPOINTS.AUTH.ME);
+      return response.data;
+    } catch {
+      return null;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  return {
+    user,
+    isAuthenticated,
+    isLoading,
+    error,
+    login,
+    logout,
+    fetchCurrentUser,
+  };
+}

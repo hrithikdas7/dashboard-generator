@@ -1,0 +1,25 @@
+import { BrowserRouter } from 'react-router-dom';
+import { SWRConfig } from 'swr';
+import { AppRouter } from './router';
+import { apiClient } from './api/client';
+
+// Global SWR fetcher using axios
+const fetcher = (url: string) => apiClient.get(url).then((res) => res.data);
+
+function App() {
+  return (
+    <SWRConfig
+      value=\{{
+        fetcher,
+        revalidateOnFocus: false,
+        shouldRetryOnError: false,
+      }}
+    >
+      <BrowserRouter>
+        <AppRouter />
+      </BrowserRouter>
+    </SWRConfig>
+  );
+}
+
+export default App;

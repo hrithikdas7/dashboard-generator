@@ -1,0 +1,86 @@
+import { Link } from 'react-router-dom';
+import { cn } from '@/utils/cn';
+import { Spinner } from '@/components/common';
+import type { RecentListProps } from './RecentList.types';
+
+const badgeVariants = {
+  default: 'bg-gray-100 text-gray-700',
+  success: 'bg-green-100 text-green-700',
+  warning: 'bg-yellow-100 text-yellow-700',
+  danger: 'bg-red-100 text-red-700',
+};
+
+export function RecentList({
+  title,
+  items,
+  isLoading = false,
+  emptyMessage = 'No recent items',
+  viewAllHref,
+  viewAllLabel = 'View all',
+  className,
+}: RecentListProps) {
+  return (
+    <div
+      className={cn(
+        'bg-white rounded-lg border border-gray-200 shadow-sm',
+        className
+      )}
+    >
+      <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+        <h3 className="font-semibold text-gray-900">{title}</h3>
+        {viewAllHref && (
+          <Link
+            to={viewAllHref}
+            className="text-sm text-primary-600 hover:text-primary-700"
+          >
+            {viewAllLabel}
+          </Link>
+        )}
+      </div>
+
+      <div className="divide-y divide-gray-100">
+        {isLoading ? (
+          <div className="flex items-center justify-center py-8">
+            <Spinner size="md" className="text-primary-600" />
+          </div>
+        ) : items.length === 0 ? (
+          <div className="px-6 py-8 text-center text-sm text-gray-500">
+            {emptyMessage}
+          </div>
+        ) : (
+          items.map((item) => (
+            <Link
+              key={item.id}
+              to={item.href}
+              className="flex items-center justify-between px-6 py-3 hover:bg-gray-50 transition-colors"
+            >
+              <div className="min-w-0">
+                <p className="text-sm font-medium text-gray-900 truncate">
+                  {item.title}
+                </p>
+                {item.subtitle && (
+                  <p className="text-xs text-gray-500 truncate">{item.subtitle}</p>
+                )}
+              </div>
+              <div className="flex items-center gap-3 ml-4 flex-shrink-0">
+                {item.badge && (
+                  <span
+                    className={cn(
+                      'px-2 py-0.5 text-xs font-medium rounded-full',
+                      badgeVariants[item.badge.variant || 'default']
+                    )}
+                  >
+                    {item.badge.text}
+                  </span>
+                )}
+                {item.timestamp && (
+                  <span className="text-xs text-gray-400">{item.timestamp}</span>
+                )}
+              </div>
+            </Link>
+          ))
+        )}
+      </div>
+    </div>
+  );
+}
