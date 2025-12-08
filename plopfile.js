@@ -145,7 +145,9 @@ export default function (plop) {
       // ============================================
       actions.push(
         { type: 'add', path: '{{projectName}}/src/api/client.ts', templateFile: 'templates/vite-react/src/api/client.ts.hbs' },
+        { type: 'add', path: '{{projectName}}/src/api/hooks.ts', templateFile: 'templates/vite-react/src/api/hooks.ts.hbs' },
         { type: 'add', path: '{{projectName}}/src/api/endpoints.ts', templateFile: 'templates/vite-react/src/api/endpoints.ts.hbs' },
+        { type: 'add', path: '{{projectName}}/src/api/index.ts', template: "export { getAxiosInstance, apiClient, getErrorMessage } from './client';\nexport * from './hooks';\nexport { API_ENDPOINTS } from './endpoints';\n" },
       );
 
       // ============================================

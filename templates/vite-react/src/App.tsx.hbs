@@ -1,10 +1,9 @@
 import { BrowserRouter } from 'react-router-dom';
 import { SWRConfig } from 'swr';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { AppRouter } from './router';
-import { apiClient } from './api/client';
-
-// Global SWR fetcher using axios
-const fetcher = (url: string) => apiClient.get(url).then((res) => res.data);
+import { fetcher } from './api/hooks';
 
 function App() {
   return (
@@ -17,6 +16,18 @@ function App() {
     >
       <BrowserRouter>
         <AppRouter />
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
       </BrowserRouter>
     </SWRConfig>
   );

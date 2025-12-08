@@ -1,0 +1,209 @@
+import useSWR from 'swr';
+import useSWRImmutable from 'swr/immutable';
+import useSWRInfinite from 'swr/infinite';
+import { getAxiosInstance } from './client';
+
+/**
+ * Fetcher for GET requests
+ */
+export const fetcher = async (url: string) => {
+  const api = getAxiosInstance();
+  return api.get(url).then((res) => res.data);
+};
+
+/**
+ * Fetcher for POST requests with payload
+ */
+export const fetcherPost = async ([url, payload]: [string, unknown]) => {
+  const api = getAxiosInstance();
+  return api.post(url, payload).then((res) => res.data);
+};
+
+/**
+ * SWR hook for static/immutable data (rarely changes)
+ * Uses useSWRImmutable - won't revalidate on focus/reconnect
+ */
+export const useSwrStatic = <T = unknown>(
+  path: string | null,
+  options: Record<string, unknown> = {}
+) => {
+  const { data, error, isLoading, isValidating, mutate } = useSWRImmutable<T>(
+    path,
+    fetcher,
+    {
+      onErrorRetry: (error, _key, _config, revalidate, { retryCount }) => {
+        if (error?.response?.status === 404) {
+          return;
+        }
+        if (retryCount < 1) {
+          setTimeout(() => revalidate({ retryCount }), 3000);
+        }
+      },
+      loadingTimeout: 10000,
+      keepPreviousData: true,
+      refreshInterval: 1000 * 60 * 60, // 1 hour
+      ...options,
+    }
+  );
+
+  return {
+    data,
+    isLoading,
+    isValidating,
+    isError: error,
+    mutate,
+  };
+};
+
+/**
+ * SWR hook for data that uses POST with payload
+ */
+export const useSwrData = <T = unknown>(
+  path: string | null,
+  payload: Record<string, unknown> = {},
+  options: Record<string, unknown> = {}
+) => {
+  const { data, error, isLoading, isValidating, mutate } = useSWRImmutable<T>(
+    path ? [path, payload] : null,
+    fetcherPost,
+    {
+      onErrorRetry: (error, _key, _config, revalidate, { retryCount }) => {
+        if (error?.response?.status === 404) {
+          return;
+        }
+        if (retryCount < 1) {
+          setTimeout(() => revalidate({ retryCount }), 3000);
+        }
+      },
+      loadingTimeout: 10000,
+      keepPreviousData: true,
+      refreshInterval: 1000 * 60 * 60, // 1 hour
+      ...options,
+    }
+  );
+
+  return {
+    data,
+    isLoading,
+    isValidating,
+    isError: error,
+    mutate,
+  };
+};
+
+/**
+ * SWR hook for dynamic/frequently changing data
+ * Uses regular useSWR - will revalidate on focus/reconnect
+ */
+export const useSwrDynamic = <T = unknown>(
+  path: string | null,
+  options: Record<string, unknown> = {}
+) => {
+  const { data, error, isLoading, isValidating, mutate } = useSWR<T>(
+    path,
+    fetcher,
+    {
+      onErrorRetry: (error, _key, _config, revalidate, { retryCount }) => {
+        if (error?.response?.status === 404) {
+          return;
+        }
+        if (retryCount < 1) {
+          setTimeout(() => revalidate({ retryCount }), 3000);
+        }
+      },
+      loadingTimeout: 10000,
+      keepPreviousData: true,
+      revalidateOnFocus: true,
+      revalidateOnReconnect: true,
+      ...options,
+    }
+  );
+
+  return {
+    data,
+    isLoading,
+    isValidating,
+    isError: error,
+    mutate,
+  };
+};
+
+/**
+ * SWR Infinite hook for paginated GET data
+ */
+export const useSwrInfiniteData = <T = unknown>(
+  getPathKey: ((pageIndex: number) => string) | null = null,
+  options: Record<string, unknown> = {}
+) => {
+  const getKey = (pageIndex: number) => {
+    return getPathKey ? `${getPathKey(pageIndex)}` : null;
+  };
+
+  const { data, error, isLoading, isValidating, size, setSize, mutate } =
+    useSWRInfinite<T>(getKey, fetcher, {
+      onErrorRetry: (error, _key, _config, revalidate, { retryCount }) => {
+        if (error?.response?.status === 404) {
+          return;
+        }
+        if (retryCount < 1) {
+          setTimeout(() => revalidate({ retryCount }), 3000);
+        }
+      },
+      loadingTimeout: 10000,
+      keepPreviousData: true,
+      revalidateFirstPage: false,
+      refreshInterval: 1000 * 60 * 60, // 1 hour
+      ...options,
+    });
+
+  return {
+    data,
+    isLoading,
+    isValidating,
+    isError: error,
+    size,
+    setSize,
+    mutate,
+  };
+};
+
+/**
+ * SWR Infinite hook for paginated POST data with payload
+ */
+export const useSwrInfinitePayload = <T = unknown>(
+  getPathKey: ((pageIndex: number) => string) | null = null,
+  getPayload: ((pageIndex: number) => unknown) | null = null,
+  options: Record<string, unknown> = {}
+) => {
+  const getKey = (pageIndex: number) => {
+    return getPathKey && getPayload
+      ? [`${getPathKey(pageIndex)}`, getPayload(pageIndex)]
+      : null;
+  };
+
+  const { data, error, isLoading, isValidating, size, setSize, mutate } =
+    useSWRInfinite<T>(getKey, fetcherPost, {
+      onErrorRetry: (error, _key, _config, revalidate, { retryCount }) => {
+        if (error?.response?.status === 404) {
+          return;
+        }
+        if (retryCount < 1) {
+          setTimeout(() => revalidate({ retryCount }), 3000);
+        }
+      },
+      loadingTimeout: 10000,
+      revalidateFirstPage: false,
+      refreshInterval: 1000 * 60 * 60, // 1 hour
+      ...options,
+    });
+
+  return {
+    data,
+    isLoading,
+    isValidating,
+    isError: error,
+    size,
+    setSize,
+    mutate,
+  };
+};
