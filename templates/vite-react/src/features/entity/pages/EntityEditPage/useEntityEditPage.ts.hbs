@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { use{{entity.name}}, use{{entity.name}}Mutations } from '../../hooks';
-import type { Update{{entity.name}}Dto } from '@/types';
+import { use{{entity.name}}, use{{entity.name}}Mutations } from '../../hooks/use{{entity.pluralName}}';
+import type { Update{{entity.name}}Dto } from '@/types/{{entity.slug}}';
+import type { FormState } from 'informed';
 
 export function use{{entity.name}}EditPage() {
   const { id } = useParams<{ id: string }>();
@@ -10,78 +11,22 @@ export function use{{entity.name}}EditPage() {
   const { {{camelCase entity.name}}, isLoading: isLoadingData, isError, error: loadError } = use{{entity.name}}(id);
   const { update{{entity.name}}, isLoading: isUpdating, error: updateError } = use{{entity.name}}Mutations();
 
-  const [formData, setFormData] = useState<Update{{entity.name}}Dto>({});
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [initialized, setInitialized] = useState(false);
-
-  // Initialize form with existing data
-  useEffect(() => {
-    if ({{camelCase entity.name}} && !initialized) {
-      setFormData({
+  // Build initial values from fetched data
+  const initialValues = useMemo<Update{{entity.name}}Dto>(() => {
+    if (!{{camelCase entity.name}}) return {};
+    return {
 {{#each entity.fields}}
 {{#if showInForm}}
-        {{name}}: {{camelCase ../entity.name}}.{{name}},
+      {{name}}: {{camelCase ../entity.name}}.{{name}},
 {{/if}}
 {{/each}}
-      });
-      setInitialized(true);
-    }
-  }, [{{camelCase entity.name}}, initialized]);
+    };
+  }, [{{camelCase entity.name}}]);
 
-  const handleFieldChange = (name: string, value: unknown) => {
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    if (errors[name]) {
-      setErrors((prev) => {
-        const newErrors = { ...prev };
-        delete newErrors[name];
-        return newErrors;
-      });
-    }
-  };
+  const handleSubmit = async ({ values }: FormState<Update{{entity.name}}Dto>) => {
+    if (!id) return;
 
-  const validate = (): boolean => {
-    const newErrors: Record<string, string> = {};
-
-{{#each entity.fields}}
-{{#if showInForm}}
-{{#if required}}
-    if (!formData.{{name}}{{#if (eq type "string")}} || String(formData.{{name}}).trim() === ''{{/if}}{{#if (eq type "text")}} || String(formData.{{name}}).trim() === ''{{/if}}) {
-      newErrors.{{name}} = '{{label}} is required';
-    }
-{{/if}}
-{{#if minLength}}
-    if (formData.{{name}} && String(formData.{{name}}).length < {{minLength}}) {
-      newErrors.{{name}} = '{{label}} must be at least {{minLength}} characters';
-    }
-{{/if}}
-{{#if maxLength}}
-    if (formData.{{name}} && String(formData.{{name}}).length > {{maxLength}}) {
-      newErrors.{{name}} = '{{label}} must be no more than {{maxLength}} characters';
-    }
-{{/if}}
-{{#if min}}
-    if (formData.{{name}} !== undefined && Number(formData.{{name}}) < {{min}}) {
-      newErrors.{{name}} = '{{label}} must be at least {{min}}';
-    }
-{{/if}}
-{{#if max}}
-    if (formData.{{name}} !== undefined && Number(formData.{{name}}) > {{max}}) {
-      newErrors.{{name}} = '{{label}} must be no more than {{max}}';
-    }
-{{/if}}
-{{/if}}
-{{/each}}
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!id || !validate()) return;
-
-    const result = await update{{entity.name}}(id, formData);
+    const result = await update{{entity.name}}(id, values);
     if (result) {
       navigate(`/{{entity.slug}}/${id}`);
     }
@@ -90,14 +35,12 @@ export function use{{entity.name}}EditPage() {
   return {
     id,
     {{camelCase entity.name}},
-    formData,
-    errors,
+    initialValues,
     isLoadingData,
     isUpdating,
     isError,
     loadError,
     updateError,
-    handleFieldChange,
     handleSubmit,
   };
 }

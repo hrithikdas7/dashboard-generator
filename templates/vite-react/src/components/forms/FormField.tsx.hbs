@@ -1,19 +1,6 @@
-import { Input } from './Input';
-import { Select } from './Select';
-import { Checkbox } from './Checkbox';
-
-interface Textarea extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
-  className?: string;
-}
-
-function Textarea({ className, ...props }: Textarea) {
-  return (
-    <textarea
-      className={`block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm ${className || ''}`}
-      {...props}
-    />
-  );
-}
+import { Input, Textarea } from '@/components/common/Input';
+import { Select } from '@/components/common/Select';
+import { Checkbox } from '@/components/common/Checkbox';
 
 export interface SelectOption {
   value: string;
@@ -24,9 +11,6 @@ export interface FormFieldProps {
   name: string;
   label: string;
   type: 'string' | 'text' | 'number' | 'boolean' | 'date' | 'datetime' | 'email' | 'url' | 'enum' | 'relation';
-  value: unknown;
-  onChange: (name: string, value: unknown) => void;
-  error?: string;
   required?: boolean;
   disabled?: boolean;
   placeholder?: string;
@@ -42,9 +26,6 @@ export function FormField({
   name,
   label,
   type,
-  value,
-  onChange,
-  error,
   required,
   disabled,
   placeholder,
@@ -55,27 +36,12 @@ export function FormField({
   minLength,
   maxLength,
 }: FormFieldProps) {
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    let newValue: unknown = e.target.value;
-
-    if (type === 'number') {
-      newValue = e.target.value === '' ? '' : Number(e.target.value);
-    } else if (type === 'boolean') {
-      newValue = (e.target as HTMLInputElement).checked;
-    }
-
-    onChange(name, newValue);
-  };
-
   // Boolean field
   if (type === 'boolean') {
     return (
       <Checkbox
         name={name}
         label={label}
-        checked={Boolean(value)}
-        onChange={handleChange}
-        error={error}
         hint={hint}
         disabled={disabled}
         required={required}
@@ -89,9 +55,6 @@ export function FormField({
       <Textarea
         name={name}
         label={label}
-        value={String(value ?? '')}
-        onChange={handleChange}
-        error={error}
         hint={hint}
         placeholder={placeholder}
         disabled={disabled}
@@ -108,12 +71,9 @@ export function FormField({
       <Select
         name={name}
         label={label}
-        value={String(value ?? '')}
-        onChange={handleChange}
-        error={error}
-        hint={hint}
         options={options}
         placeholder={placeholder || `Select ${label.toLowerCase()}...`}
+        hint={hint}
         disabled={disabled}
         required={required}
       />
@@ -132,12 +92,9 @@ export function FormField({
 
   return (
     <Input
-      type={inputType}
       name={name}
+      type={inputType}
       label={label}
-      value={value === null || value === undefined ? '' : String(value)}
-      onChange={handleChange}
-      error={error}
       hint={hint}
       placeholder={placeholder}
       disabled={disabled}

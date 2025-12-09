@@ -1,16 +1,16 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 {{#if hasAuth}}
 import { ProtectedRoute } from '@/components/layout/ProtectedRoute';
-import { LoginPage } from '@/features/auth/pages/LoginPage';
+import { LoginPage } from '@/features/auth/pages/LoginPage/LoginPage';
 {{/if}}
 {{#if hasDashboard}}
-import { DashboardPage } from '@/features/dashboard/pages/DashboardPage';
+import { DashboardPage } from '@/features/dashboard/pages/DashboardPage/DashboardPage';
 {{/if}}
 {{#each entities}}
-import { {{name}}ListPage } from '@/features/{{slug}}/pages/{{name}}ListPage';
-import { {{name}}DetailPage } from '@/features/{{slug}}/pages/{{name}}DetailPage';
-import { {{name}}CreatePage } from '@/features/{{slug}}/pages/{{name}}CreatePage';
-import { {{name}}EditPage } from '@/features/{{slug}}/pages/{{name}}EditPage';
+import { {{name}}ListPage } from '@/features/{{slug}}/pages/{{name}}ListPage/{{name}}ListPage';
+import { {{name}}DetailPage } from '@/features/{{slug}}/pages/{{name}}DetailPage/{{name}}DetailPage';
+import { {{name}}CreatePage } from '@/features/{{slug}}/pages/{{name}}CreatePage/{{name}}CreatePage';
+import { {{name}}EditPage } from '@/features/{{slug}}/pages/{{name}}EditPage/{{name}}EditPage';
 {{/each}}
 import { NotFoundPage } from '@/pages/NotFoundPage';
 

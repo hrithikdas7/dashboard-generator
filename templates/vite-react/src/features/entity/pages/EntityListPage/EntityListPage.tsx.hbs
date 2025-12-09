@@ -4,12 +4,28 @@
  */
 
 import { Link } from 'react-router-dom';
-import { PageHeader } from '@/components/layout';
-import { DataTable, Button, Badge, ConfirmModal, getStatusVariant } from '@/components/common';
-import type { Column } from '@/components/common';
+import { PageHeader } from '@/components/layout/PageHeader';
+import { DataTable } from '@/components/common/DataTable';
+import type { Column } from '@/components/common/DataTable';
+import { Button } from '@/components/common/Button';
+import { Badge } from '@/components/common/Badge';
+import { ConfirmModal } from '@/components/common/Modal';
 import { formatDate, formatCurrency } from '@/utils/format';
 import { use{{entity.name}}ListPage } from './use{{entity.name}}ListPage';
-import type { {{entity.name}} } from '@/types';
+import type { {{entity.name}} } from '@/types/{{entity.slug}}';
+
+// Helper to get badge variant based on status
+function getStatusVariant(status: string): 'default' | 'success' | 'warning' | 'danger' {
+  const variants: Record<string, 'default' | 'success' | 'warning' | 'danger'> = {
+    active: 'success',
+    inactive: 'default',
+    pending: 'warning',
+    discontinued: 'danger',
+    completed: 'success',
+    cancelled: 'danger',
+  };
+  return variants[status.toLowerCase()] || 'default';
+}
 
 export function {{entity.name}}ListPage() {
   const {

@@ -147,7 +147,6 @@ export default function (plop) {
         { type: 'add', path: '{{projectName}}/src/api/client.ts', templateFile: 'templates/vite-react/src/api/client.ts.hbs' },
         { type: 'add', path: '{{projectName}}/src/api/hooks.ts', templateFile: 'templates/vite-react/src/api/hooks.ts.hbs' },
         { type: 'add', path: '{{projectName}}/src/api/endpoints.ts', templateFile: 'templates/vite-react/src/api/endpoints.ts.hbs' },
-        { type: 'add', path: '{{projectName}}/src/api/index.ts', template: "export { getAxiosInstance, apiClient, getErrorMessage } from './client';\nexport * from './hooks';\nexport { API_ENDPOINTS } from './endpoints';\n" },
       );
 
       // ============================================
@@ -162,7 +161,6 @@ export default function (plop) {
       // GLOBAL TYPES (src/types/)
       // ============================================
       actions.push(
-        { type: 'add', path: '{{projectName}}/src/types/index.ts', templateFile: 'templates/vite-react/src/types/index.ts.hbs' },
         { type: 'add', path: '{{projectName}}/src/types/auth.ts', templateFile: 'templates/vite-react/src/types/auth.ts.hbs' },
         { type: 'add', path: '{{projectName}}/src/types/api.ts', templateFile: 'templates/vite-react/src/types/api.ts.hbs' },
       );
@@ -178,7 +176,7 @@ export default function (plop) {
 
       // ============================================
       // COMMON COMPONENTS (src/components/common/)
-      // Shared reusable UI components
+      // Shared reusable UI components - no barrel files
       // ============================================
       actions.push(
         { type: 'add', path: '{{projectName}}/src/components/common/Button.tsx', templateFile: 'templates/vite-react/src/components/ui/Button.tsx.hbs' },
@@ -196,12 +194,11 @@ export default function (plop) {
         { type: 'add', path: '{{projectName}}/src/components/common/FormField.tsx', templateFile: 'templates/vite-react/src/components/forms/FormField.tsx.hbs' },
         { type: 'add', path: '{{projectName}}/src/components/common/FormSection.tsx', templateFile: 'templates/vite-react/src/components/forms/FormSection.tsx.hbs' },
         { type: 'add', path: '{{projectName}}/src/components/common/FormActions.tsx', templateFile: 'templates/vite-react/src/components/forms/FormActions.tsx.hbs' },
-        { type: 'add', path: '{{projectName}}/src/components/common/index.ts', templateFile: 'templates/vite-react/src/components/common/index.ts.hbs' },
       );
 
       // ============================================
       // LAYOUT COMPONENTS (src/components/layout/)
-      // App shell components
+      // App shell components - no barrel files
       // ============================================
       actions.push(
         { type: 'add', path: '{{projectName}}/src/components/layout/AppLayout.tsx', templateFile: 'templates/vite-react/src/components/layout/AppLayout.tsx.hbs' },
@@ -209,14 +206,6 @@ export default function (plop) {
         { type: 'add', path: '{{projectName}}/src/components/layout/Header.tsx', templateFile: 'templates/vite-react/src/components/layout/Header.tsx.hbs' },
         { type: 'add', path: '{{projectName}}/src/components/layout/PageHeader.tsx', templateFile: 'templates/vite-react/src/components/layout/PageHeader.tsx.hbs' },
         { type: 'add', path: '{{projectName}}/src/components/layout/ProtectedRoute.tsx', templateFile: 'templates/vite-react/src/components/layout/ProtectedRoute.tsx.hbs' },
-        { type: 'add', path: '{{projectName}}/src/components/layout/index.ts', templateFile: 'templates/vite-react/src/components/layout/index.ts.hbs' },
-      );
-
-      // ============================================
-      // APP-WIDE SHARED HOOKS (src/hooks/)
-      // ============================================
-      actions.push(
-        { type: 'add', path: '{{projectName}}/src/hooks/index.ts', templateFile: 'templates/vite-react/src/hooks/index.ts.hbs' },
       );
 
       // ============================================
@@ -224,16 +213,12 @@ export default function (plop) {
       // ============================================
       if (data.hasAuth) {
         actions.push(
-          // Pages
+          // Pages - no index.ts barrel files
           { type: 'add', path: '{{projectName}}/src/features/auth/pages/LoginPage/LoginPage.tsx', templateFile: 'templates/vite-react/src/features/auth/pages/LoginPage/LoginPage.tsx.hbs' },
           { type: 'add', path: '{{projectName}}/src/features/auth/pages/LoginPage/useLoginPage.ts', templateFile: 'templates/vite-react/src/features/auth/pages/LoginPage/useLoginPage.ts.hbs' },
           { type: 'add', path: '{{projectName}}/src/features/auth/pages/LoginPage/LoginPage.types.ts', templateFile: 'templates/vite-react/src/features/auth/pages/LoginPage/LoginPage.types.ts.hbs' },
-          { type: 'add', path: '{{projectName}}/src/features/auth/pages/LoginPage/index.ts', templateFile: 'templates/vite-react/src/features/auth/pages/LoginPage/index.ts.hbs' },
           // Module hooks
           { type: 'add', path: '{{projectName}}/src/features/auth/hooks/useAuth.ts', templateFile: 'templates/vite-react/src/hooks/useAuth.ts.hbs' },
-          { type: 'add', path: '{{projectName}}/src/features/auth/hooks/index.ts', templateFile: 'templates/vite-react/src/features/auth/hooks/index.ts.hbs' },
-          // Feature index
-          { type: 'add', path: '{{projectName}}/src/features/auth/index.ts', templateFile: 'templates/vite-react/src/features/auth/index.ts.hbs' },
         );
       }
 
@@ -242,27 +227,19 @@ export default function (plop) {
       // ============================================
       if (data.hasDashboard) {
         actions.push(
-          // Pages
+          // Pages - no index.ts barrel files
           { type: 'add', path: '{{projectName}}/src/features/dashboard/pages/DashboardPage/DashboardPage.tsx', templateFile: 'templates/vite-react/src/features/dashboard/pages/DashboardPage/DashboardPage.tsx.hbs' },
           { type: 'add', path: '{{projectName}}/src/features/dashboard/pages/DashboardPage/useDashboardPage.ts', templateFile: 'templates/vite-react/src/features/dashboard/pages/DashboardPage/useDashboardPage.ts.hbs' },
           { type: 'add', path: '{{projectName}}/src/features/dashboard/pages/DashboardPage/DashboardPage.types.ts', templateFile: 'templates/vite-react/src/features/dashboard/pages/DashboardPage/DashboardPage.types.ts.hbs' },
-          { type: 'add', path: '{{projectName}}/src/features/dashboard/pages/DashboardPage/index.ts', templateFile: 'templates/vite-react/src/features/dashboard/pages/DashboardPage/index.ts.hbs' },
-          // Components - StatCard
+          // Components - StatCard (no index.ts)
           { type: 'add', path: '{{projectName}}/src/features/dashboard/components/StatCard/StatCard.tsx', templateFile: 'templates/vite-react/src/features/dashboard/components/StatCard/StatCard.tsx.hbs' },
           { type: 'add', path: '{{projectName}}/src/features/dashboard/components/StatCard/StatCard.types.ts', templateFile: 'templates/vite-react/src/features/dashboard/components/StatCard/StatCard.types.ts.hbs' },
-          { type: 'add', path: '{{projectName}}/src/features/dashboard/components/StatCard/index.ts', templateFile: 'templates/vite-react/src/features/dashboard/components/StatCard/index.ts.hbs' },
-          // Components - RecentList
+          // Components - RecentList (no index.ts)
           { type: 'add', path: '{{projectName}}/src/features/dashboard/components/RecentList/RecentList.tsx', templateFile: 'templates/vite-react/src/features/dashboard/components/RecentList/RecentList.tsx.hbs' },
           { type: 'add', path: '{{projectName}}/src/features/dashboard/components/RecentList/RecentList.types.ts', templateFile: 'templates/vite-react/src/features/dashboard/components/RecentList/RecentList.types.ts.hbs' },
-          { type: 'add', path: '{{projectName}}/src/features/dashboard/components/RecentList/index.ts', templateFile: 'templates/vite-react/src/features/dashboard/components/RecentList/index.ts.hbs' },
-          // Components - QuickActions
+          // Components - QuickActions (no index.ts)
           { type: 'add', path: '{{projectName}}/src/features/dashboard/components/QuickActions/QuickActions.tsx', templateFile: 'templates/vite-react/src/features/dashboard/components/QuickActions/QuickActions.tsx.hbs' },
           { type: 'add', path: '{{projectName}}/src/features/dashboard/components/QuickActions/QuickActions.types.ts', templateFile: 'templates/vite-react/src/features/dashboard/components/QuickActions/QuickActions.types.ts.hbs' },
-          { type: 'add', path: '{{projectName}}/src/features/dashboard/components/QuickActions/index.ts', templateFile: 'templates/vite-react/src/features/dashboard/components/QuickActions/index.ts.hbs' },
-          // Components index
-          { type: 'add', path: '{{projectName}}/src/features/dashboard/components/index.ts', templateFile: 'templates/vite-react/src/features/dashboard/components/index.ts.hbs' },
-          // Feature index
-          { type: 'add', path: '{{projectName}}/src/features/dashboard/index.ts', templateFile: 'templates/vite-react/src/features/dashboard/index.ts.hbs' },
         );
       }
 
@@ -288,7 +265,7 @@ export default function (plop) {
             data: entityData,
           });
 
-          // Entity feature module - ListPage
+          // Entity feature module - ListPage (no index.ts)
           actions.push({
             type: 'add',
             path: `{{projectName}}/src/features/${entity.slug}/pages/${entity.name}ListPage/${entity.name}ListPage.tsx`,
@@ -307,14 +284,8 @@ export default function (plop) {
             templateFile: 'templates/vite-react/src/features/entity/pages/EntityListPage/EntityListPage.types.ts.hbs',
             data: entityData,
           });
-          actions.push({
-            type: 'add',
-            path: `{{projectName}}/src/features/${entity.slug}/pages/${entity.name}ListPage/index.ts`,
-            templateFile: 'templates/vite-react/src/features/entity/pages/EntityListPage/index.ts.hbs',
-            data: entityData,
-          });
 
-          // Entity feature module - DetailPage
+          // Entity feature module - DetailPage (no index.ts)
           actions.push({
             type: 'add',
             path: `{{projectName}}/src/features/${entity.slug}/pages/${entity.name}DetailPage/${entity.name}DetailPage.tsx`,
@@ -333,14 +304,8 @@ export default function (plop) {
             templateFile: 'templates/vite-react/src/features/entity/pages/EntityDetailPage/EntityDetailPage.types.ts.hbs',
             data: entityData,
           });
-          actions.push({
-            type: 'add',
-            path: `{{projectName}}/src/features/${entity.slug}/pages/${entity.name}DetailPage/index.ts`,
-            templateFile: 'templates/vite-react/src/features/entity/pages/EntityDetailPage/index.ts.hbs',
-            data: entityData,
-          });
 
-          // Entity feature module - CreatePage
+          // Entity feature module - CreatePage (no index.ts)
           actions.push({
             type: 'add',
             path: `{{projectName}}/src/features/${entity.slug}/pages/${entity.name}CreatePage/${entity.name}CreatePage.tsx`,
@@ -359,14 +324,8 @@ export default function (plop) {
             templateFile: 'templates/vite-react/src/features/entity/pages/EntityCreatePage/EntityCreatePage.types.ts.hbs',
             data: entityData,
           });
-          actions.push({
-            type: 'add',
-            path: `{{projectName}}/src/features/${entity.slug}/pages/${entity.name}CreatePage/index.ts`,
-            templateFile: 'templates/vite-react/src/features/entity/pages/EntityCreatePage/index.ts.hbs',
-            data: entityData,
-          });
 
-          // Entity feature module - EditPage
+          // Entity feature module - EditPage (no index.ts)
           actions.push({
             type: 'add',
             path: `{{projectName}}/src/features/${entity.slug}/pages/${entity.name}EditPage/${entity.name}EditPage.tsx`,
@@ -385,24 +344,12 @@ export default function (plop) {
             templateFile: 'templates/vite-react/src/features/entity/pages/EntityEditPage/EntityEditPage.types.ts.hbs',
             data: entityData,
           });
-          actions.push({
-            type: 'add',
-            path: `{{projectName}}/src/features/${entity.slug}/pages/${entity.name}EditPage/index.ts`,
-            templateFile: 'templates/vite-react/src/features/entity/pages/EntityEditPage/index.ts.hbs',
-            data: entityData,
-          });
 
-          // Entity hooks
+          // Entity hooks (no index.ts)
           actions.push({
             type: 'add',
             path: `{{projectName}}/src/features/${entity.slug}/hooks/use${entity.pluralName}.ts`,
             templateFile: 'templates/vite-react/src/features/entity/hooks/useEntity.ts.hbs',
-            data: entityData,
-          });
-          actions.push({
-            type: 'add',
-            path: `{{projectName}}/src/features/${entity.slug}/hooks/index.ts`,
-            templateFile: 'templates/vite-react/src/features/entity/hooks/index.ts.hbs',
             data: entityData,
           });
 
@@ -421,25 +368,12 @@ export default function (plop) {
             templateFile: 'templates/vite-react/src/mocks/entity.json.hbs',
             data: entityData,
           });
-
-          // Feature index
-          actions.push({
-            type: 'add',
-            path: `{{projectName}}/src/features/${entity.slug}/index.ts`,
-            templateFile: 'templates/vite-react/src/features/entity/index.ts.hbs',
-            data: entityData,
-          });
         });
       }
 
       // Mock handlers
       actions.push(
         { type: 'add', path: '{{projectName}}/src/mocks/handlers.ts', templateFile: 'templates/vite-react/src/mocks/handlers.ts.hbs' },
-      );
-
-      // Features index
-      actions.push(
-        { type: 'add', path: '{{projectName}}/src/features/index.ts', templateFile: 'templates/vite-react/src/features/index.ts.hbs' },
       );
 
       return actions;

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { apiClient, getErrorMessage } from '@/api/client';
 import { API_ENDPOINTS } from '@/api/endpoints';
 import { useAuthStore } from '@/stores/authStore';
-import type { LoginCredentials, LoginResponse, User } from '@/types';
+import type { LoginCredentials, LoginResponse, User } from '@/types/auth';
 
 export function useAuth() {
   const navigate = useNavigate();
